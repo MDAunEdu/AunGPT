@@ -2,11 +2,11 @@ const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 
-// Zapier webhook
-const API_URL = "https://hooks.zapier.com/hooks/catch/24869704/u9asgak/";
+// Your Zapier webhook URL (send user message)
+const ZAPIER_HOOK = "https://hooks.zapier.com/hooks/catch/24869704/u9asgak/";
 
-// Your backend to fetch AI responses
-const BACKEND_URL = "https://your-backend.onrender.com";
+// Temporary endpoint to fetch AI responses
+const AI_RESPONSE_URL = "https://api.jsonbin.io/v3/b/YOUR_BIN_ID/latest"; // replace with your JSON bin
 
 sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
@@ -28,31 +28,38 @@ function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
-  // Send to Zapier
-  fetch(API_URL, {
+  addMessage("🤖 AI: I'm thinking...", "bot");
+
+  fetch(ZAPIER_HOOK, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: text })
   })
-  .catch(() => {
-    addMessage("⚠️ Error sending message.", "bot");
-  });
-
-  addMessage("🤖 AI: I'm thinking...", "bot");
+  .catch(() => addMessage("⚠️ Error sending message to Zapier.", "bot"));
 }
 
-// Poll backend every 2 seconds for AI response
+// Poll for AI response every 2 seconds
 async function fetchAIResponse() {
   try {
-    const res = await fetch(`${BACKEND_URL}/latest-response`);
+    const res = await fetch(AI_RESPONSE_URL, {
+      headers: { "X-Master-Key": "$YOUR_JSONBIN_KEY" } // only if using JSONBin
+    });
     const data = await res.json();
-    if (data.response) {
-      addMessage(data.response, "bot");
-      // Clear response after showing
-      await fetch(`${BACKEND_URL}/clear-response`, { method: "POST" });
+
+    if (data.record && data.record.response) {
+      addMessage(data.record.response, "bot");
+      // Clear response after showing (optional)
+      await fetch(AI_RESPONSE_URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": "$YOUR_JSONBIN_KEY"
+        },
+        body: JSON.stringify({ response: "" })
+      });
     }
   } catch (err) {
-    console.error("Error fetching AI response:", err);
+    console.error(err);
   }
 }
 
