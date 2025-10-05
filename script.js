@@ -2,8 +2,11 @@ const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 
-// Replace with your API endpoint (Zapier, OpenAI, or any backend automation)
-const API_URL = "https://hooks.zapier.com/hooks/catch/YOUR_ZAP_ID/";
+// Zapier webhook
+const API_URL = "https://hooks.zapier.com/hooks/catch/24869704/u9asgak/";
+
+// Your backend to fetch AI responses
+const BACKEND_URL = "https://your-backend.onrender.com";
 
 sendBtn.addEventListener("click", sendMessage);
 userInput.addEventListener("keypress", (e) => {
@@ -25,17 +28,32 @@ function sendMessage() {
   addMessage(text, "user");
   userInput.value = "";
 
-  // Send to Zapier or backend
+  // Send to Zapier
   fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: text })
   })
-  .then(res => res.json())
-  .then(data => {
-    addMessage(data.reply || "🤖 AI: I'm thinking...", "bot");
-  })
   .catch(() => {
-    addMessage("⚠️ Error connecting to server.", "bot");
+    addMessage("⚠️ Error sending message.", "bot");
   });
+
+  addMessage("🤖 AI: I'm thinking...", "bot");
 }
+
+// Poll backend every 2 seconds for AI response
+async function fetchAIResponse() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/latest-response`);
+    const data = await res.json();
+    if (data.response) {
+      addMessage(data.response, "bot");
+      // Clear response after showing
+      await fetch(`${BACKEND_URL}/clear-response`, { method: "POST" });
+    }
+  } catch (err) {
+    console.error("Error fetching AI response:", err);
+  }
+}
+
+setInterval(fetchAIResponse, 2000);
