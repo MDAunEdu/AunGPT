@@ -1,0 +1,119 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+  color: white;
+}
+
+.chat-container {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 25px;
+  width: 380px;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+}
+
+.chat-header {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.chat-header h2 {
+  margin: 0;
+  font-size: 1.5em;
+  letter-spacing: 1px;
+}
+
+.chat-header p {
+  font-size: 0.8em;
+  opacity: 0.8;
+}
+
+.chat-box {
+  height: 300px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.chat-input button {
+  background: #00ffff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.chat-input button:hover {
+  background: #14b8a6;
+}
+
+/* ✨ Levitating Bars Effect */
+.floating-bars {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.bar {
+  width: 8px;
+  height: 40px;
+  background: #00ffff;
+  border-radius: 10px;
+  animation: float 2s infinite ease-in-out;
+}
+
+.bar:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.bar:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.bar:nth-child(4) {
+  animation-delay: 0.6s;
+}
+.bar:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-15px);
+    opacity: 1;
+  }
+}
